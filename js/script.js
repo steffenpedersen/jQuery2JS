@@ -262,29 +262,19 @@ console.log(off("h1", "mouseenter", consoleLog));
 /////////////////////// .one() ///////////////////////
 //////////////////////////////////////////////////////
 
-function one(ele, handler, callback) {
+function one(ele, handler, func) {
   var x = find(ele);
 
-  x.addEventListener(handler, off);
-  //return on(x, handler, off(x, handler, consoleLog));
+	x.addEventListener(handler, function() {
+		// remove event
+		x.removeEventListener(handler, func);
+		// call handler
+    return func();
+	});
 
 }
+// one-time event
 one("p", "click", consoleLog);
-
-// bruge begge
-
-/*
-function testFn(event) {
-  // remove event
-  // The target event property returns the element that triggered the event.
-  // The arguments.callee property contains the currently executing function.
-  console.log(arguments);
-  event.target.removeEventListener(event.type, testFn);
-  // call handler
-  // returns "function" with
-  return callback(event);
-}
-*/
 
 //////////////////////////////////////////////////////
 ///////////////////// .trigger() /////////////////////

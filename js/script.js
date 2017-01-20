@@ -262,23 +262,58 @@ console.log(off("h1", "mouseenter", consoleLog));
 /////////////////////// .one() ///////////////////////
 //////////////////////////////////////////////////////
 
+
 function one(ele, handler, func) {
   var x = find(ele);
 
-	x.addEventListener(handler, function() {
-		// remove event
-		x.removeEventListener(handler, func);
-		// call handler
-    return func();
-	});
+  x.addEventListener(handler, oneFunc);
 
+  // hoisting bliver læst først
+  function oneFunc() {
+    // remove event
+    x.removeEventListener(handler, oneFunc);
+    func();
+  }
 }
-// one-time event
 one("p", "click", consoleLog);
 
 //////////////////////////////////////////////////////
 ///////////////////// .trigger() /////////////////////
 //////////////////////////////////////////////////////
+
+
+function runOnScroll(evt) {
+  console.log("loleren");
+};
+window.addEventListener("scroll", runOnScroll);
+
+function myFunction() {
+  var w = window.outerWidth;
+  var h = window.outerHeight;
+  var txt = "Window size: width=" + w + ", height=" + h;
+  document.getElementById("resize").innerHTML = txt;
+}
+on("body", "resize", myFunction);
+
+// Execute all handlers and behaviors attached to the
+// matched elements for the given event type.
+
+// scroll, resize, mouse, keydown keyup
+
+on("body", "scroll", consoleLog);
+
+function trigger(ele, e) {
+  let cb = find(ele); //element to click on
+  let evt = new Event(e); // represents events that occur due to a mouse.
+
+  // if then mouseevent
+
+  cb.dispatchEvent(evt); // afsender event
+}
+trigger("body", "scroll");
+// native
+// custom events
+
 
 
 //////////////////////////////////////////////////////
@@ -289,3 +324,58 @@ one("p", "click", consoleLog);
 //////////////////////////////////////////////////////
 ////////////////////// .delegate /////////////////////
 //////////////////////////////////////////////////////
+
+
+
+/////////////////////// let, var, const ///////////////////////
+
+// funfunfunction
+// let er block scope (som if-statement)
+// var er function scope
+// const kan ikke overskrives
+
+// minimize mutable state / minimere foranderlig tilstand
+
+/////////////////////// .bind ///////////////////////
+
+function bind() {
+  let dog = {
+    sound: "woof",
+    talk: function() {
+      console.log(this.sound)
+    }
+  }
+
+  let button = document.getElementById("dog")
+
+  button.addEventListener(
+    "click",
+    dog.talk.bind(dog)
+    // bind it to dog because it doesn't know "this" (it goes to window)
+  )
+}
+bind();
+
+///////////////// => arrow functions ///////////////
+
+// it is a shorter function syntax
+// to make small inline single-purpose functions
+
+function arrow() {
+  const dragonEvents = [
+    { type: "attack", value: 12, target: "player-dorkman" },
+    { type: "eat", value: 40, target: "player-fluff" },
+    { type: "kill", value: 100, target: "player-dorkman" },
+    { type: "attack", value: 12, target: "player-kent" },
+  ]
+  const totalDamage = dragonEvents
+    // 1. filter
+    .filter(function(event) {
+      return event.type === "attack"
+    })
+    // 2. filter
+    .filter(event => event.target === "player-kent")
+
+  console.log(totalDamage);
+}
+arrow();

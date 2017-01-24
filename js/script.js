@@ -2,6 +2,9 @@
 /////////////////// $() / .find() ////////////////////
 //////////////////////////////////////////////////////
 
+// you don't know js
+// eloquent
+
 // tjekke element for id, tag, class, css selector
 function find(ele) {
   var x = document.querySelector(ele);
@@ -281,38 +284,153 @@ one("p", "click", consoleLog);
 ///////////////////// .trigger() /////////////////////
 //////////////////////////////////////////////////////
 
-
+////////////////////// scroll ///////////////////////
 function runOnScroll(evt) {
   console.log("loleren");
 };
+on("body", "scroll", consoleLog);
 window.addEventListener("scroll", runOnScroll);
 
-function myFunction() {
+////////////////////// resize ///////////////////////
+function resize() {
   var w = window.outerWidth;
   var h = window.outerHeight;
   var txt = "Window size: width=" + w + ", height=" + h;
   document.getElementById("resize").innerHTML = txt;
 }
-on("body", "resize", myFunction);
+resize();
+window.addEventListener('resize', resize);
 
-// Execute all handlers and behaviors attached to the
-// matched elements for the given event type.
+/////////////////////// dbclick ////////////////////////
+function runOnDBclick(evt) {
+  css("#box", "background-color", "pink");
+};
 
-// scroll, resize, mouse, keydown keyup
+function dbclick(ele) {
+  let x = find(ele);
+  x.addEventListener('dblclick', runOnDBclick);
+}
+dbclick("#box");
 
-on("body", "scroll", consoleLog);
+/////////////////////// click ////////////////////////
+function runOnSingleclick(evt) {
+  css("#box", "background-color", "lightgrey");
+};
+
+function singleclick(ele) {
+  let x = find(ele);
+  x.addEventListener('click', runOnSingleclick);
+}
+singleclick("#box");
+
+/////////////////////// keyup ///////////////////////
+function runOnKeyup(evt) {
+  console.log("keyup");
+};
+
+function keyup() {
+  window.addEventListener('keyup', runOnKeyup);
+}
+keyup();
+
+/////////////////////// keydown ///////////////////////
+function runOnKeydown(evt) {
+  console.log("keydown");
+};
+
+function keydown() {
+  window.addEventListener('keydown', runOnKeydown);
+}
+keydown();
+
+/////////////////////// custom event ///////////////////////
+
+function tripleClick(ele) {
+  var uygfEvent = new Event('uygf');
+  x = find(ele);
+
+  x.addEventListener('click', function(evt) {
+    if (evt.detail === 3) {
+      x.dispatchEvent(uygfEvent);
+    }
+  });
+}
+tripleClick("#box");
+on("#box", "uygf", function(){
+  alert('triple click!');
+});
+
+/////////////////////// trigger ///////////////////////
 
 function trigger(ele, e) {
-  let cb = find(ele); //element to click on
+  let cb = find(ele);
   let evt = new Event(e); // represents events that occur due to a mouse.
-
-  // if then mouseevent
+  console.log(cb);
 
   cb.dispatchEvent(evt); // afsender event
 }
-trigger("body", "scroll");
-// native
-// custom events
+trigger("#box", "dblclick");
+
+//////////////////////////////////////////////////////
+/////////////////////// cascade //////////////////////
+//////////////////////////////////////////////////////
+
+var cascade1 = {
+
+  findElement: function() {
+    this.txt1 = "Hej";
+    this.txt2 = "Hello";
+    return this;
+  }
+
+}
+//alert(cascade1.findElement().txt2);
+
+var cascade2 = {
+
+  currentEle: [],
+
+  findCas: function (ele) {
+    this.currentEle1 = [].slice.call(document.querySelectorAll(ele));
+    this.currentEle2 = document.querySelectorAll(ele);
+    console.log(this.currentEle1);
+    console.log(this.currentEle2);
+
+    return this;
+  },
+
+  triggerCas: function (e) {
+    var evt = new Event(e); // represents events that occur due to a mouse.
+
+    this.currentEle.dispatchEvent(evt); // afsender event
+
+    return this;
+  },
+
+  cssCas: function (prop, def) {
+    console.log(this.currentEle);
+    var style = window.getComputedStyle(this.currentEle) // method gives the values of all the CSS properties of an element
+
+    if (def) {
+      return this.currentEle.style[prop] = def;
+    }
+    return this;
+  },
+
+  addClassCas: function (name) {
+
+    for (var i = 1; i < arguments.length; i++) { // before the loop; condition for running; after the loop
+      name = arguments[i];
+      this.currentEle.classList.add(name);
+    }
+    return this;
+
+  }
+
+}
+console.log(cascade2.findCas("p").addClassCas("otherClass2", "otherClass3"));
+//cascade2.findCas("#box").cssCas("background-color", "green");
+
 
 
 
@@ -320,12 +438,16 @@ trigger("body", "scroll");
 //////////////////////// .live ///////////////////////
 //////////////////////////////////////////////////////
 
+// Attach an event handler for all elements which match
+// the current selector, now and in the future.
 
 //////////////////////////////////////////////////////
 ////////////////////// .delegate /////////////////////
 //////////////////////////////////////////////////////
 
-
+// Attach a handler to one or more events for all elements
+// that match the selector, now or in the future, based on
+// a specific set of root elements.
 
 /////////////////////// let, var, const ///////////////////////
 

@@ -386,52 +386,6 @@ var cascade1 = {
 }
 //alert(cascade1.findElement().txt2);
 
-var cascade2 = {
-
-  currentEle: [],
-
-  findCas: function (ele) {
-    this.currentEle1 = [].slice.call(document.querySelectorAll(ele));
-    this.currentEle2 = document.querySelectorAll(ele);
-    console.log(this.currentEle1);
-    console.log(this.currentEle2);
-
-    return this;
-  },
-
-  triggerCas: function (e) {
-    var evt = new Event(e); // represents events that occur due to a mouse.
-
-    this.currentEle.dispatchEvent(evt); // afsender event
-
-    return this;
-  },
-
-  cssCas: function (prop, def) {
-    console.log(this.currentEle);
-    var style = window.getComputedStyle(this.currentEle) // method gives the values of all the CSS properties of an element
-
-    if (def) {
-      return this.currentEle.style[prop] = def;
-    }
-    return this;
-  },
-
-  addClassCas: function (name) {
-
-    for (var i = 1; i < arguments.length; i++) { // before the loop; condition for running; after the loop
-      name = arguments[i];
-      this.currentEle.classList.add(name);
-    }
-    return this;
-
-  }
-
-}
-console.log(cascade2.findCas("p").addClassCas("otherClass2", "otherClass3"));
-//cascade2.findCas("#box").cssCas("background-color", "green");
-
-
 
 
 //////////////////////////////////////////////////////

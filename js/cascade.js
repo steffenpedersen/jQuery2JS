@@ -4,10 +4,42 @@
 
 */
 
+// get ende kæden
+// set fortsætter
+// lave if else
+
 var cascade = {
 
   currentEle: [],
 
+  // current element, current index, the array
+  filt: function(elem, index, self) {
+
+    return index == self.indexOf(elem);
+    // 2. findes elementet(object) i arrayet flere gange
+
+    // 1. object equality
+
+    // så det er altså værdien!
+
+    // 1. sammenligne objecter
+  },
+
+  unique: function(a) {
+    var arr = a;
+    var outputArr = [];
+
+    for (var i = 0; i < a.length; i++) {
+      // hvis a[i] ikke findes i outputArr, så:
+      if (a[i] !== outputArr) {
+        outputArr.push(a[i]);
+      }
+    }
+
+    return outputArr;
+
+    // return arr.filter(this.filt);
+  },
   // en function til at kunne løbe currentelements i gennem til hvert element
   forEach: function (callback) { // callback/function
     for (var i = 0; i < this.currentEle.length; i++) {
@@ -17,13 +49,33 @@ var cascade = {
 
   find: function (ele) {
     var nodes = document.querySelectorAll(ele)
+
     this.currentEle = [];
 
     // starter ved den sidste, hvis der er elementer, kører den anden vej
     for (i = nodes.length - 1; i >= 0; --i) {
       this.currentEle.push(nodes[i]);
     }
-    return this; // currentEle: Array[4]
+
+    a = [ "Woof", "Woof", "Dog", "Cat", "Cat"]
+    console.log(this.currentEle);
+    console.log(this.unique(this.currentEle));
+
+    return this; // currentEle: Array[5]
+  },
+
+  //////////// ERROR ////////////
+  parent: function() {
+
+    // get: find plus parent
+    // fortsætte med this
+    // ikke dubletter
+
+    this.forEach(function(e) {
+      e.parentElement;
+      console.log(e.parentElement);
+    });
+    return this;
   },
 
   //////////// ERROR ////////////
@@ -48,10 +100,16 @@ var cascade = {
     return this;
   },
 
+  // To use cascading, we have to return this
+  // (the object we want subsequent methods to operate on)
+  // in each method.
+
   //////////// ERROR ////////////
-  parent: function() {
+  children: function() {
     this.forEach(function(e) {
-      return e.parentElement;
+      var children = e.children;
+      var arr = [].slice.call(children);
+      return arr;
     });
     return this;
   },
@@ -107,3 +165,13 @@ this.forEach(function(e) {
   return this;
 });
 */
+
+function filt(elem, index, self) {
+  return index == self.indexOf(elem);
+}
+
+function unique() {
+  var arr = [1, 2, 2, 3, 4, 5, 5, 5, 6, 7, 7, 8, 9, 10, 10];
+  return arr.filter(filt);
+}
+console.log(unique());

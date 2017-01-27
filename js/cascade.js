@@ -1,44 +1,31 @@
-/*
-
-  Hvornår skal jeg return this?
-
-*/
+// To use cascading, we have to return this
+// (the object we want subsequent methods to operate on)
+// in each method.
 
 // get ende kæden
 // set fortsætter
 // lave if else
 
+function log() {
+  console.log("It Works!");
+}
+
 var cascade = {
 
   currentEle: [],
 
-  // current element, current index, the array
-  filt: function(elem, index, self) {
-
-    return index == self.indexOf(elem);
-    // 2. findes elementet(object) i arrayet flere gange
-
-    // 1. object equality
-
-    // så det er altså værdien!
-
-    // 1. sammenligne objecter
-  },
-
   unique: function(a) {
-    var arr = a;
     var outputArr = [];
 
     for (var i = 0; i < a.length; i++) {
-      // hvis a[i] ikke findes i outputArr, så:
-      if (a[i] !== outputArr) {
+      // hvis array outputArr med indexOf (retunerer positionen af værdien)
+      // object ikke er i array
+      if (outputArr.indexOf(a[i]) == -1) {
         outputArr.push(a[i]);
       }
     }
 
     return outputArr;
-
-    // return arr.filter(this.filt);
   },
   // en function til at kunne løbe currentelements i gennem til hvert element
   forEach: function (callback) { // callback/function
@@ -50,46 +37,141 @@ var cascade = {
   find: function (ele) {
     var nodes = document.querySelectorAll(ele)
 
-    this.currentEle = [];
+    var newElements = []; // laver tom array
 
     // starter ved den sidste, hvis der er elementer, kører den anden vej
     for (i = nodes.length - 1; i >= 0; --i) {
-      this.currentEle.push(nodes[i]);
+      newElements.push(nodes[i]);
     }
 
-    a = [ "Woof", "Woof", "Dog", "Cat", "Cat"]
-    console.log(this.currentEle);
-    console.log(this.unique(this.currentEle));
+    this.currentEle = newElements; // tager this.currentEle og erstatter
 
     return this; // currentEle: Array[5]
   },
 
-  //////////// ERROR ////////////
   parent: function() {
 
-    // get: find plus parent
-    // fortsætte med this
-    // ikke dubletter
+    var newElements = []; // laver tom array
 
     this.forEach(function(e) {
-      e.parentElement;
-      console.log(e.parentElement);
+      newElements.push(e.parentElement); // push til tomt array
     });
+
+    this.currentEle = this.unique(newElements); // tager this.currentEle og erstatter
+
     return this;
   },
 
-  //////////// ERROR ////////////
-  html: function (value) {
+  children: function() {
+    var newElements = [];
 
-    this.forEach(function (e) {
-      if (value) {
-        e.innerHTML = value;
-      }
+    this.forEach(function(e) {
+      var arr = [].slice.call(e.children); // slicer htmlcollection til array så css kan bruge det
+      newElements.push(arr);
+    });
+    var mynewElements = [].concat.apply([], newElements); // merge nested arrays into one
 
-      return e.innerHTML;
-      console.log(e.innerHTML);
+    this.currentEle = mynewElements;
+
+    return this;
+  },
+
+  parentChildren: function() {
+
+    var newElements = [];
+
+    this.forEach(function(e) {
+      var arr = [].slice.call(e.parentNode.children);
+      newElements.push(arr);
+    });
+    var mynewElements = [].concat.apply([], newElements); // merge nested arrays into one
+
+    this.currentEle = mynewElements;
+
+    return this;
+  },
+
+  siblings: function() {
+
+    var newElements = [];
+
+    this.forEach(function(e) {
+      var nodes = parentChildren(ele);
+
+      nodes = nodes.filter(function val(node) {
+        return node !== x;
+      });
 
     });
+    var mynewElements = [].concat.apply([], newElements); // merge nested arrays into one
+
+    this.currentEle = mynewElements;
+
+    return this;
+
+  },
+
+  // get/set
+  css: function (prop, def) {
+
+    var newElements = []; // laver tom array
+
+    this.forEach(function (e) {
+      var style = window.getComputedStyle(e) // method gives the values of all the CSS properties of an element
+
+      newElements.push(style[prop]); // push til tomt array
+
+      if (def) {
+        e.style[prop] = def;
+      }
+    });
+
+    this.currentEle = newElements; // tager this.currentEle og erstatter
+
+    if (def) { // på alle get/set
+      return this;
+    }
+
+    return newElements;
+
+  },
+
+  addClass: function(name) {
+
+    for (var j = 0; j < arguments.length; j++) {
+      name = arguments[j];
+
+      this.forEach(function(e) {
+        e.classList.add(name);
+      });
+    }
+
+    return this;
+  },
+
+  removeClass: function(name) {
+
+    for (var j = 0; j < arguments.length; j++) {
+      name = arguments[j];
+
+      this.forEach(function(e) {
+        e.classList.remove(name);
+      });
+    }
+
+    return this;
+  },
+
+  toggleClass: function(name) {
+
+    for (var j = 0; j < arguments.length; j++) {
+      name = arguments[j];
+
+      this.forEach(function(e) {
+        e.classList.toggle(name);
+      });
+    }
+
     return this;
   },
 
@@ -100,78 +182,87 @@ var cascade = {
     return this;
   },
 
-  // To use cascading, we have to return this
-  // (the object we want subsequent methods to operate on)
-  // in each method.
-
-  //////////// ERROR ////////////
-  children: function() {
-    this.forEach(function(e) {
-      var children = e.children;
-      var arr = [].slice.call(children);
-      return arr;
-    });
-    return this;
-  },
-  //////////// ERROR ////////////
-  css: function (prop, def) {
+  html: function (value) {
+    var newElements = [];
 
     this.forEach(function (e) {
-      var style = window.getComputedStyle(e) // method gives the values of all the CSS properties of an element
-
-      if (def) {
-        return e.style[prop] = def;
+      newElements.push(e.innerHTML);
+      if (value) {
+        e.innerHTML = value;
       }
-      return style[prop];
-      // set ikke this
     });
+
+    if (value) { // på alle get/set
+      return this;
+    }
+
+    return newElements;
+
+  },
+
+  val: function (value) {
+    var newElements = [];
+
+    this.forEach(function (e) {
+      newElements.push(e.value);
+      if (value) {
+        e.value = value;
+      }
+    });
+    if (value) { // på alle get/set
+      return this;
+    }
+
+    return newElements;
+  },
+  /*
+  append: function (node, text) {
+    this.forEach(function (e) {
+
+      var node = document.createElement(node);
+      var textnode = document.createTextNode(text);
+      node.appendChild(textnode);
+      document.querySelector(e).appendChild(node);
+    });
+  },
+*/
+  on: function (handler, func) {
+    this.forEach(function (e) {
+      e.addEventListener(handler, func);
+    });
+
     return this;
   },
 
-  addClass: function(name) {
-    for (var j = 0; j < arguments.length; j++) {
-      name = arguments[j];
+  off: function(handler, func) {
+    this.forEach(function (e) {
+      e.removeEventListener(handler, func);
+    });
 
-      this.forEach(function(e) {
-        e.classList.add(name);
-      });
-    }
+    return this;
+  },
+
+  one: function(handler, func) {
+    this.forEach(function (e) {
+      e.addEventListener(handler, removeEvent);
+      function removeEvent() {
+        e.removeEventListener(handler, removeEvent);
+        func();
+      }
+    });
+
+    return this;
+  },
+
+  trigger: function(evnt) {
+    this.forEach(function (e) {
+      let evt = new Event(evnt);
+      e.dispatchEvent(evt); // afsender event
+    });
+
     return this;
   }
+
 }
-console.log(cascade.find("li").parent());
-cascade.find("li").css("background-color", "green").addClass("halli", "hallo");
-
-/*
-
-function addClass2(ele, className) {
-  var x = find(ele);
-
-  for (var i = 1; i < arguments.length; i++) { // before the loop; condition for running; after the loop
-    className = arguments[i];
-    x.classList.add(className);
-  }
-}
-addClass2("li.someClass", "otherClass2", "otherClass3");
-
-*/
-
-/*
-this.forEach(function(e) {
-  for (var i = 1; i < arguments.length; i++) { // before the loop; condition for running; after the loop
-    name = arguments[i];
-    e.classList.add(name);
-  }
-  return this;
-});
-*/
-
-function filt(elem, index, self) {
-  return index == self.indexOf(elem);
-}
-
-function unique() {
-  var arr = [1, 2, 2, 3, 4, 5, 5, 5, 6, 7, 7, 8, 9, 10, 10];
-  return arr.filter(filt);
-}
-console.log(unique());
+console.log(cascade.find("ul").children().css("background-color", "lightblue"));
+//cascade.find("h4").parent().css("border", "2px solid lightblue");

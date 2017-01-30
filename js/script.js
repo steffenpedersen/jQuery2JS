@@ -154,7 +154,7 @@ function parentChildren(ele) {
   //console.log(arr);
   return arr;
 }
-parentChildren("li#aID");
+console.log(parentChildren("li#aID"));
 
 // siblings
 function siblings(ele) {
@@ -165,9 +165,9 @@ function siblings(ele) {
     return node !== x;
   });
 
-  //console.log(nodes);
+  return nodes;
 }
-siblings("li#aID");
+console.log(siblings("li#aID"));
 
 //////////////////////////////////////////////////////
 ///////////////////// .addClass() ////////////////////

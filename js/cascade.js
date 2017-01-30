@@ -4,10 +4,13 @@
 
 // get ende kæden
 // set fortsætter
-// lave if else
 
 function log() {
   console.log("It Works!");
+}
+
+function logSome(string) {
+  console.log(string);
 }
 
 var cascade = {
@@ -47,6 +50,27 @@ var cascade = {
     this.currentEle = newElements; // tager this.currentEle og erstatter
 
     return this; // currentEle: Array[5]
+  },
+
+  each: function (array, func) {
+    // det bør være find().each().css()
+    var a = array;
+
+    a.forEach(function(x) {
+      func(x);
+    });
+
+    return this;
+  },
+
+  click: function (func) {
+    this.forEach(function(e) {
+      e.onclick = function(x) {
+        func(x);
+      };
+    });
+
+    return this;
   },
 
   parent: function() {
@@ -96,19 +120,18 @@ var cascade = {
     var newElements = [];
 
     this.forEach(function(e) {
-      var nodes = parentChildren(ele);
+      var nodes = this.parentChildren();
 
       nodes = nodes.filter(function val(node) {
-        return node !== x;
+        return node !== e;
       });
-
+      newElements.push(nodes);
     });
     var mynewElements = [].concat.apply([], newElements); // merge nested arrays into one
 
     this.currentEle = mynewElements;
 
     return this;
-
   },
 
   // get/set
@@ -197,7 +220,6 @@ var cascade = {
     }
 
     return newElements;
-
   },
 
   val: function (value) {
@@ -215,17 +237,31 @@ var cascade = {
 
     return newElements;
   },
-  /*
-  append: function (node, text) {
-    this.forEach(function (e) {
 
-      var node = document.createElement(node);
-      var textnode = document.createTextNode(text);
+  append: function (node, text) {
+    var node = document.createElement(node);
+    var textnode = document.createTextNode(text);
+
+    this.forEach(function (e) {
       node.appendChild(textnode);
-      document.querySelector(e).appendChild(node);
+      e.appendChild(node);
     });
+
+    return this;
   },
-*/
+
+  prepend: function (node, text) {
+    var node = document.createElement(node);
+    var textnode = document.createTextNode(text);
+
+    this.forEach(function (e) {
+      node.appendChild(textnode);
+      e.insertBefore(node, e.childNodes[0]);
+    });
+
+    return this;
+  },
+
   on: function (handler, func) {
     this.forEach(function (e) {
       e.addEventListener(handler, func);
@@ -264,5 +300,5 @@ var cascade = {
   }
 
 }
-console.log(cascade.find("ul").children().css("background-color", "lightblue"));
+//console.log(cascade.find("ul").siblings().css("border", "2px solid lightblue"));
 //cascade.find("h4").parent().css("border", "2px solid lightblue");

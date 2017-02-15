@@ -243,7 +243,9 @@ var cascade = {
     var textnode = document.createTextNode(text);
 
     this.forEach(function (e) {
-      node.appendChild(textnode);
+      if (text) {
+        node.appendChild(textnode);
+      }
       e.appendChild(node);
     });
 
@@ -297,8 +299,74 @@ var cascade = {
     });
 
     return this;
-  }
+  },
 
+  live: function(eventType, cb) {
+    var find = [];
+
+    this.forEach(function(e) {
+      console.log(e);
+      find.push(e)
+    });
+
+    document.addEventListener(eventType, function (event) {
+      if (find) {
+        var el = event.target
+        , index = -1;
+
+        // if event element and index of array has index -1 and therefore
+        // doesn't exist
+        if (el && ((index = Array.prototype.indexOf.call(find, el)) === -1)) {
+          // event element bubble up the DOM
+          el = el.parentElement;
+        }
+        // if index is bigger than -1
+        if (index > -1) {
+          // add callback with arguments el and event/function
+          cb.call(el, event);
+        }
+      }
+    });
+
+    return this;
+  }
 }
 //console.log(cascade.find("ul").siblings().css("border", "2px solid lightblue"));
 //cascade.find("h4").parent().css("border", "2px solid lightblue");
+
+cascade.find("li").live("click", log);
+cascade.find("ul").append("li", "COMEON");
+/*
+function live (eventType, element, cb) {
+    document.addEventListener(eventType, function (event) {
+        var findNew = [];
+
+        var find = document.querySelectorAll(element);
+
+        // not necessary
+        for (var i = 0; i < find.length; i++) {
+          findNew.push(find[i]);
+        }
+
+        if (findNew) {
+          var el = event.target
+          , index = -1;
+
+          // if event element and index of array has index -1 and therefore
+          // doesn't exist
+          if (el && ((index = Array.prototype.indexOf.call(findNew, el)) === -1)) {
+            // event element bubble up the DOM
+            el = el.parentElement;
+          }
+          // if index is bigger than -1
+          if (index > -1) {
+            // add callback with arguments el and event/function
+            cb.call(el, event);
+          }
+        }
+    });
+}
+
+live('click', 'li', function(event) { console.log(event); alert('Welcome!'); });
+cascade.find("ul").append("li", "COMEON");
+*/

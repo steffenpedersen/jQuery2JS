@@ -6,3 +6,16 @@ h1 {
   color: blue;
   font-size: 30px;
 }
+
+div#live {
+  height: 100px;
+  width: 100px;
+  background-color: orange;
+  cursor: pointer;
+  display: inline-block;
+  margin: 30px;
+}
+
+div#live:first-child {
+  background-color: grey;
+}
